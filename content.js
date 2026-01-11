@@ -180,9 +180,13 @@ function injectStyles() {
             display: flex;
             justify-content: space-between;
             align-items: center;
+            gap: 12px;
         }
         .ds-dark .ds-prompt-main-header {
             border-color: #333;
+        }
+        #ds-main-header-actions {
+            margin-left: auto;
         }
         .ds-prompt-search {
             padding: 8px 12px;
@@ -301,6 +305,10 @@ function injectStyles() {
             background: #333;
             border-color: #444;
             color: #fff;
+        }
+        textarea.ds-form-input {
+            resize: vertical;
+            min-height: 120px;
         }
         .ds-icon-grid {
             display: grid;
@@ -466,6 +474,7 @@ const PromptManager = {
                 <div class="ds-prompt-main">
                     <div class="ds-prompt-main-header">
                         <input type="text" class="ds-prompt-search" placeholder="搜索提示词..." id="ds-prompt-search-input">
+                        <div id="ds-main-header-actions"></div>
                         <button class="ds-prompt-close" id="ds-prompt-close-btn">&times;</button>
                     </div>
                     <div class="ds-prompt-content" id="ds-prompt-content-area"></div>
@@ -553,12 +562,22 @@ const PromptManager = {
 
     renderPrompts() {
         const contentArea = document.getElementById('ds-prompt-content-area');
-        if (!contentArea) return;
+        const actionsContainer = document.getElementById('ds-main-header-actions');
+        if (!contentArea || !actionsContainer) return;
 
         contentArea.innerHTML = '';
+        actionsContainer.innerHTML = '';
         
         const activeCategory = this.state.categories.find(c => c.id === this.state.activeCategoryId);
         if (!activeCategory) return;
+
+        if (activeCategory.is_custom) {
+            const addPromptBtn = document.createElement('button');
+            addPromptBtn.textContent = '+ 创建提示词';
+            addPromptBtn.className = 'ds-btn ds-btn-primary';
+            addPromptBtn.addEventListener('click', () => this.showAddPromptDialog());
+            actionsContainer.appendChild(addPromptBtn);
+        }
 
         const grid = document.createElement('div');
         grid.className = 'ds-prompt-grid';
@@ -590,6 +609,66 @@ const PromptManager = {
         });
 
         contentArea.appendChild(grid);
+    },
+
+    showAddPromptDialog(promptToEdit = null) {
+        const modal = document.querySelector('.ds-prompt-modal');
+        if (!modal) return;
+
+        const dialogOverlay = document.createElement('div');
+        dialogOverlay.className = 'ds-dialog-overlay';
+
+        const isEdit = !!promptToEdit;
+
+        dialogOverlay.innerHTML = `
+            <div class="ds-dialog" style="width: 480px;">
+                <h3>${isEdit ? '编辑提示词' : '新建提示词'}</h3>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">标题</label>
+                    <input type="text" class="ds-form-input" id="ds-prompt-title" value="${promptToEdit ? promptToEdit.title : ''}">
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">内容</label>
+                    <textarea class="ds-form-input" id="ds-prompt-content" rows="8">${promptToEdit ? promptToEdit.content : ''}</textarea>
+                </div>
+                <div class="ds-dialog-buttons">
+                    <button class="ds-btn ds-btn-secondary" id="ds-prompt-cancel">取消</button>
+                    <button class="ds-btn ds-btn-primary" id="ds-prompt-save">保存</button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(dialogOverlay);
+
+        const closeDialog = () => dialogOverlay.remove();
+
+        document.getElementById('ds-prompt-cancel').addEventListener('click', closeDialog);
+        document.getElementById('ds-prompt-save').addEventListener('click', () => {
+            const title = document.getElementById('ds-prompt-title').value.trim();
+            const content = document.getElementById('ds-prompt-content').value.trim();
+
+            if (!title || !content) {
+                alert('标题和内容不能为空！');
+                return;
+            }
+
+            this.savePrompt({ title, content });
+            closeDialog();
+        });
+    },
+
+    savePrompt(promptData) {
+        const activeCategory = this.state.categories.find(c => c.id === this.state.activeCategoryId);
+        if (!activeCategory || !activeCategory.is_custom) return;
+
+        activeCategory.prompts.push(promptData);
+        
+        const categoryIndex = this.state.customCategories.findIndex(c => c.id === this.state.activeCategoryId);
+        if (categoryIndex > -1) {
+            this.state.customCategories[categoryIndex] = activeCategory;
+            this.saveCustomCategories();
+            this.renderPrompts();
+        }
     },
 
     showAddCategoryDialog(categoryToEdit = null) {
