@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "DeepSeek Prompt Button",
+  "version": "1.0",
+  "description": "Adds a prompt button to DeepSeek chat interface",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://chat.deepseek.com/*"],
+      "js": ["content.js"]
+    }
+  ]
+}
