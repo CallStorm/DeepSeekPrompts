@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "DeepSeek Prompt Button",
-  "version": "1.0",
-  "description": "Adds a prompt button to DeepSeek chat interface",
+  "name": "DeepSeek Prompt Quicker",
+  "version": "1.1.0",
+  "description": "为 DeepSeek 聊天界面提供专业的提示词管理功能，内置编程、写作、创意等多种场景提示词，支持自定义分类和个性化提示词库，让您的 AI 对话更高效、更精准",
   "permissions": ["storage"],
   "content_scripts": [
     {
