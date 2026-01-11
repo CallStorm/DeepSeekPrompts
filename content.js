@@ -364,6 +364,16 @@ function injectStyles() {
             background: #007bff;
             color: white;
         }
+        .ds-btn-primary:disabled {
+            background: #ccc;
+            color: #666;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .ds-dark .ds-btn-primary:disabled {
+            background: #555;
+            color: #888;
+        }
         .ds-upload-btn {
             margin-top: 8px;
             font-size: 12px;
@@ -379,6 +389,301 @@ function injectStyles() {
         .ds-upload-btn:hover {
             background: rgba(0, 123, 255, 0.1);
         }
+        
+        /* Model Configuration Styles */
+        .ds-model-config-modal {
+            width: 900px;
+            height: 700px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        .ds-dark .ds-model-config-modal {
+            background: #2d2d2d;
+            color: #fff;
+        }
+        .ds-model-config-sidebar {
+            width: 250px;
+            background: #f5f5f5;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+        .ds-dark .ds-model-config-sidebar {
+            background: #1e1e1e;
+            border-color: #333;
+        }
+        .ds-model-config-sidebar-header {
+            padding: 16px;
+            font-weight: bold;
+            font-size: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .ds-dark .ds-model-config-sidebar-header {
+            border-color: #333;
+        }
+        .ds-model-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px;
+        }
+        .ds-model-item {
+            padding: 12px;
+            cursor: pointer;
+            border-radius: 6px;
+            margin-bottom: 4px;
+            color: #333;
+            transition: background 0.2s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ds-dark .ds-model-item {
+            color: #ccc;
+        }
+        .ds-model-item:hover {
+            background: #e0e0e0;
+        }
+        .ds-dark .ds-model-item:hover {
+            background: #333;
+        }
+        .ds-model-item.active {
+            background: #007bff;
+            color: #fff;
+        }
+        .ds-model-item.default {
+            border: 2px solid #28a745;
+        }
+        .ds-model-item-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+        .ds-model-item-provider {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+        .ds-model-item-actions {
+            display: none;
+            gap: 4px;
+        }
+        .ds-model-item:hover .ds-model-item-actions {
+            display: flex;
+        }
+        /* Model Card Styles */
+        .ds-model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+        }
+        .ds-model-card {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: #fff;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+        .ds-dark .ds-model-card {
+            background: #333;
+            border-color: #444;
+        }
+        .ds-model-card:hover {
+            border-color: #007bff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        .ds-model-card.active {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .ds-model-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .ds-model-card-title {
+            font-weight: bold;
+            font-size: 16px;
+            margin-bottom: 4px;
+            flex: 1;
+        }
+        .ds-model-card-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+            background: #28a745;
+            color: #fff;
+            margin-left: 8px;
+        }
+        .ds-dark .ds-model-card-badge {
+            background: #22c55e;
+            color: #fff;
+        }
+        .ds-model-card-provider {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .ds-dark .ds-model-card-provider {
+            color: #aaa;
+        }
+        .ds-model-card-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .ds-dark .ds-model-card-actions {
+            border-color: #444;
+        }
+        .ds-model-card-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .ds-dark .ds-model-card-btn {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+        .ds-model-card-btn:hover {
+            background: #f5f5f5;
+            border-color: #007bff;
+        }
+        .ds-dark .ds-model-card-btn:hover {
+            background: #333;
+        }
+        .ds-model-card-btn.delete {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        .ds-model-card-btn.delete:hover {
+            background: #dc3545;
+            color: #fff;
+        }
+        .ds-model-card-btn:disabled {
+            background: #e0e0e0;
+            color: #999;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+        .ds-dark .ds-model-card-btn:disabled {
+            background: #444;
+            color: #666;
+        }
+        .ds-model-config-main {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+        }
+        .ds-dark .ds-model-config-main {
+            background: #2d2d2d;
+        }
+        .ds-model-config-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ds-dark .ds-model-config-header {
+            border-color: #333;
+        }
+        .ds-model-config-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+        .ds-model-form {
+            max-width: 500px;
+        }
+        .ds-model-form-group {
+            margin-bottom: 20px;
+        }
+        .ds-model-form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .ds-model-form-input, .ds-model-form-select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+        .ds-dark .ds-model-form-input, .ds-dark .ds-model-form-select {
+            background: #333;
+            border-color: #444;
+            color: #fff;
+        }
+        .ds-model-form-input:focus, .ds-model-form-select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .ds-model-test-result {
+            margin-top: 8px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .ds-model-test-result.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .ds-model-test-result.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .ds-dark .ds-model-test-result.success {
+            background: #1e3a1e;
+            color: #4ade80;
+            border-color: #22c55e;
+        }
+        .ds-dark .ds-model-test-result.error {
+            background: #3a1e1e;
+            color: #f87171;
+            border-color: #ef4444;
+        }
+        .ds-model-config-buttons {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .ds-dark .ds-model-config-buttons {
+            border-color: #333;
+        }
+        .ds-model-empty-state {
+            text-align: center;
+            color: #999;
+            margin-top: 100px;
+        }
+        .ds-dark .ds-model-empty-state {
+            color: #aaa;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -390,16 +695,24 @@ const PromptManager = {
         activeCategoryId: 'coding',
         searchQuery: '',
         customCategories: [],
-        categories: [] // Combined premade + custom
+        categories: [], // Combined premade + custom
+        models: [],
+        activeModelId: null
     },
 
     init() {
         injectStyles();
         this.loadCustomCategories();
+        this.loadModels();
         // Listen for storage changes
         chrome.storage.onChanged.addListener((changes, namespace) => {
-            if (namespace === 'local' && changes.customCategories) {
-                this.loadCustomCategories();
+            if (namespace === 'local') {
+                if (changes.customCategories) {
+                    this.loadCustomCategories();
+                }
+                if (changes.models) {
+                    this.loadModels();
+                }
             }
         });
     },
@@ -413,6 +726,16 @@ const PromptManager = {
                 this.renderPrompts();
             }
         });
+    },
+
+    loadModels() {
+        chrome.storage.local.get(['models'], (result) => {
+            this.state.models = result.models || [];
+        });
+    },
+
+    saveModels() {
+        chrome.storage.local.set({ models: this.state.models });
     },
 
     updateCategories() {
@@ -470,6 +793,7 @@ const PromptManager = {
                     <div class="ds-prompt-sidebar-header">提示词库</div>
                     <div class="ds-prompt-categories" id="ds-categories-list"></div>
                     <button class="ds-prompt-add-btn" id="ds-add-category-btn">+ 新建分类</button>
+                    <button class="ds-prompt-add-btn" id="ds-model-config-btn" style="margin-top: 8px;">⚙️ 模型配置</button>
                 </div>
                 <div class="ds-prompt-main">
                     <div class="ds-prompt-main-header">
@@ -498,6 +822,9 @@ const PromptManager = {
 
         const addCategoryBtn = overlay.querySelector('#ds-add-category-btn');
         addCategoryBtn.addEventListener('click', () => this.showAddCategoryDialog());
+
+        const modelConfigBtn = overlay.querySelector('#ds-model-config-btn');
+        modelConfigBtn.addEventListener('click', () => this.showModelConfigDialog());
 
         document.body.appendChild(overlay);
         this.renderSidebar();
@@ -817,6 +1144,565 @@ const PromptManager = {
         }
         this.renderSidebar();
         this.renderPrompts();
+    },
+
+    showModelConfigDialog() {
+        const overlay = document.createElement('div');
+        overlay.className = 'ds-prompt-modal-overlay';
+        
+        // Check for dark mode
+        if (document.documentElement.classList.contains('dark')) {
+            overlay.classList.add('ds-dark');
+        }
+
+        overlay.innerHTML = `
+            <div class="ds-model-config-modal">
+                <div class="ds-model-config-sidebar">
+                    <div class="ds-model-config-sidebar-header">模型配置</div>
+                    <button class="ds-prompt-add-btn" id="ds-add-model-btn" style="margin: 16px;">+ 新增模型</button>
+                </div>
+                <div class="ds-model-config-main">
+                    <div class="ds-model-config-header">
+                        <h3 id="ds-model-config-title">模型列表</h3>
+                        <button class="ds-prompt-close" id="ds-model-config-close">&times;</button>
+                    </div>
+                    <div class="ds-model-config-content" id="ds-model-config-content">
+                        <div class="ds-model-grid" id="ds-model-list"></div>
+                    </div>
+                    <div class="ds-model-config-buttons" id="ds-model-config-buttons" style="display: none;">
+                        <button class="ds-btn ds-btn-secondary" id="ds-model-cancel-btn">取消</button>
+                        <button class="ds-btn ds-btn-secondary" id="ds-model-test-btn">测试连接</button>
+                        <button class="ds-btn ds-btn-primary" id="ds-model-save-btn">保存</button>
+                    </div>
+                </div>
+            </div>
+        `;
+
+        // Event Listeners
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.remove();
+        });
+
+        overlay.querySelector('#ds-model-config-close').addEventListener('click', () => {
+            overlay.remove();
+        });
+
+        overlay.querySelector('#ds-add-model-btn').addEventListener('click', () => {
+            this.showAddModelDialog();
+        });
+
+        document.body.appendChild(overlay);
+        this.renderModelList();
+    },
+
+    renderModelList() {
+        const listContainer = document.getElementById('ds-model-list');
+        if (!listContainer) return;
+
+        // 如果列表容器不是grid，改为grid
+        if (!listContainer.classList.contains('ds-model-grid')) {
+            listContainer.className = 'ds-model-grid';
+        }
+
+        listContainer.innerHTML = '';
+        
+        if (this.state.models.length === 0) {
+            listContainer.innerHTML = '<div class="ds-model-empty-state" style="grid-column: 1 / -1;"><p>暂无模型，请点击"新增模型"添加</p></div>';
+            return;
+        }
+
+        this.state.models.forEach(model => {
+            const card = document.createElement('div');
+            card.className = `ds-model-card ${model.id === this.state.activeModelId ? 'active' : ''}`;
+            
+            const defaultBadge = model.isDefault ? '<span class="ds-model-card-badge">默认</span>' : '';
+            
+            card.innerHTML = `
+                <div class="ds-model-card-header">
+                    <div>
+                        <div class="ds-model-card-title">
+                            ${model.displayName}${defaultBadge}
+                        </div>
+                        <div class="ds-model-card-provider">供应商: ${this.getProviderName(model.provider)}</div>
+                    </div>
+                </div>
+                <div class="ds-model-card-actions">
+                    <button class="ds-model-card-btn edit-btn">编辑</button>
+                    <button class="ds-model-card-btn set-default-btn" ${model.isDefault ? 'disabled' : ''}>${model.isDefault ? '默认' : '设置默认'}</button>
+                    <button class="ds-model-card-btn delete delete-btn">删除</button>
+                </div>
+            `;
+
+            card.addEventListener('click', (e) => {
+                if (e.target.closest('.ds-model-card-actions')) return;
+                this.state.activeModelId = model.id;
+                this.renderModelList();
+                this.renderModelConfig();
+            });
+
+            const editBtn = card.querySelector('.edit-btn');
+            editBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.state.activeModelId = model.id;
+                this.renderModelList();
+                this.renderModelConfig();
+            });
+
+            const setDefaultBtn = card.querySelector('.set-default-btn');
+            if (setDefaultBtn) {
+                if (model.isDefault) {
+                    setDefaultBtn.disabled = true;
+                } else {
+                    setDefaultBtn.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        this.setDefaultModel(model.id);
+                    });
+                }
+            }
+
+            const deleteBtn = card.querySelector('.delete-btn');
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm(`确定要删除模型 "${model.displayName}" 吗？`)) {
+                    this.deleteModel(model.id);
+                }
+            });
+
+            listContainer.appendChild(card);
+        });
+    },
+
+    renderModelConfig() {
+        const contentArea = document.getElementById('ds-model-config-content');
+        const buttonsArea = document.getElementById('ds-model-config-buttons');
+        const titleArea = document.getElementById('ds-model-config-title');
+        
+        if (!contentArea || !buttonsArea || !titleArea) return;
+
+        const model = this.state.models.find(m => m.id === this.state.activeModelId);
+        if (!model) {
+            // 没有选中模型时，隐藏配置表单，显示列表
+            buttonsArea.style.display = 'none';
+            titleArea.textContent = '模型列表';
+            // 重新创建列表容器并渲染列表
+            contentArea.innerHTML = '<div class="ds-model-grid" id="ds-model-list"></div>';
+            this.renderModelList();
+            return;
+        }
+
+        titleArea.textContent = model.displayName;
+
+        contentArea.innerHTML = `
+            <div class="ds-model-form">
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">供应商</label>
+                    <select class="ds-model-form-select" id="ds-model-provider">
+                        <option value="deepseek" ${model.provider === 'deepseek' ? 'selected' : ''}>DeepSeek</option>
+                        <option value="volcengine" ${model.provider === 'volcengine' ? 'selected' : ''}>火山引擎</option>
+                    </select>
+                </div>
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">基础URL</label>
+                    <input type="text" class="ds-model-form-input" id="ds-model-baseurl" value="${model.baseUrl}" placeholder="https://api.deepseek.com">
+                </div>
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">API密钥</label>
+                    <input type="password" class="ds-model-form-input" id="ds-model-apikey" value="${model.apiKey}" placeholder="输入API密钥">
+                </div>
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">模型名称</label>
+                    <input type="text" class="ds-model-form-input" id="ds-model-name" value="${model.model}" placeholder="deepseek-chat">
+                </div>
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">显示名称</label>
+                    <input type="text" class="ds-model-form-input" id="ds-model-displayname" value="${model.displayName}" placeholder="模型别名">
+                </div>
+                <div class="ds-model-form-group">
+                    <label class="ds-model-form-label">
+                        <input type="checkbox" id="ds-model-default" ${model.isDefault ? 'checked' : ''}> 设为默认模型
+                    </label>
+                </div>
+                <div id="ds-model-test-result"></div>
+            </div>
+        `;
+
+        buttonsArea.style.display = 'flex';
+
+        // 绑定事件
+        document.getElementById('ds-model-provider').addEventListener('change', (e) => {
+            const provider = e.target.value;
+            const baseUrlInput = document.getElementById('ds-model-baseurl');
+            if (provider === 'deepseek') {
+                baseUrlInput.value = 'https://api.deepseek.com';
+            } else if (provider === 'volcengine') {
+                baseUrlInput.value = 'https://ark.cn-beijing.volces.com/api/v3';
+            }
+        });
+
+        document.getElementById('ds-model-cancel-btn').addEventListener('click', () => {
+            this.state.activeModelId = null;
+            this.renderModelList();
+            this.renderModelConfig();
+        });
+
+        document.getElementById('ds-model-test-btn').addEventListener('click', () => {
+            this.testModelConnection();
+        });
+
+        document.getElementById('ds-model-save-btn').addEventListener('click', () => {
+            this.saveModelConfig();
+        });
+    },
+
+    getProviderName(provider) {
+        const providerNames = {
+            'deepseek': 'DeepSeek',
+            'volcengine': '火山引擎'
+        };
+        return providerNames[provider] || provider;
+    },
+
+    deleteModel(id) {
+        const modelIndex = this.state.models.findIndex(m => m.id === id);
+        if (modelIndex === -1) return;
+
+        const deletedModel = this.state.models[modelIndex];
+        this.state.models.splice(modelIndex, 1);
+
+        // 如果删除的是默认模型，将第一个模型设为默认
+        if (deletedModel.isDefault && this.state.models.length > 0) {
+            this.state.models[0].isDefault = true;
+        }
+
+        this.saveModels();
+        
+        // 如果删除的是当前选中的模型，清空选择
+        if (this.state.activeModelId === id) {
+            this.state.activeModelId = null;
+        }
+
+        this.renderModelList();
+        this.renderModelConfig();
+    },
+
+    setDefaultModel(id) {
+        const model = this.state.models.find(m => m.id === id);
+        if (!model) return;
+
+        // 清除其他模型的默认状态
+        this.state.models.forEach(m => m.isDefault = false);
+        
+        // 设置当前模型为默认
+        model.isDefault = true;
+        
+        this.saveModels();
+        this.renderModelList();
+        this.renderModelConfig();
+    },
+
+    showAddModelDialog() {
+        const modal = document.querySelector('.ds-model-config-modal');
+        if (!modal) return;
+
+        // Remove existing dialog if any
+        const existingDialog = modal.querySelector('.ds-dialog-overlay');
+        if (existingDialog) existingDialog.remove();
+
+        const dialogOverlay = document.createElement('div');
+        dialogOverlay.className = 'ds-dialog-overlay';
+
+        dialogOverlay.innerHTML = `
+            <div class="ds-dialog" style="width: 480px;">
+                <h3>新增模型</h3>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">供应商</label>
+                    <select class="ds-form-input" id="ds-new-model-provider">
+                        <option value="deepseek">DeepSeek</option>
+                        <option value="volcengine">火山引擎</option>
+                    </select>
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">基础URL</label>
+                    <input type="text" class="ds-form-input" id="ds-new-model-baseurl" value="https://api.deepseek.com" placeholder="https://api.deepseek.com">
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">API密钥</label>
+                    <input type="password" class="ds-form-input" id="ds-new-model-apikey" placeholder="输入API密钥">
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">模型名称</label>
+                    <input type="text" class="ds-form-input" id="ds-new-model-name" placeholder="deepseek-chat">
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">显示名称</label>
+                    <input type="text" class="ds-form-input" id="ds-new-model-displayname" placeholder="模型别名">
+                </div>
+                <div class="ds-form-group">
+                    <label class="ds-form-label">
+                        <input type="checkbox" id="ds-new-model-default"> 设为默认模型
+                    </label>
+                </div>
+                <div id="ds-new-model-test-result"></div>
+                <div class="ds-dialog-buttons">
+                    <button class="ds-btn ds-btn-secondary" id="ds-new-model-cancel">取消</button>
+                    <button class="ds-btn ds-btn-secondary" id="ds-new-model-test">测试连接</button>
+                    <button class="ds-btn ds-btn-primary" id="ds-new-model-save" disabled>保存</button>
+                </div>
+            </div>
+        `;
+
+        modal.appendChild(dialogOverlay);
+
+        const closeDialog = () => dialogOverlay.remove();
+        const testResult = document.getElementById('ds-new-model-test-result');
+        const saveBtn = document.getElementById('ds-new-model-save');
+        let isTested = false; // 用于记录测试状态
+
+        // 供应商选择事件
+        document.getElementById('ds-new-model-provider').addEventListener('change', (e) => {
+            const provider = e.target.value;
+            const baseUrlInput = document.getElementById('ds-new-model-baseurl');
+            if (provider === 'deepseek') {
+                baseUrlInput.value = 'https://api.deepseek.com';
+            } else if (provider === 'volcengine') {
+                baseUrlInput.value = 'https://ark.cn-beijing.volces.com/api/v3';
+            }
+            // 重置测试状态
+            isTested = false;
+            saveBtn.disabled = true;
+            testResult.innerHTML = '';
+        });
+
+        // 测试连接功能
+        document.getElementById('ds-new-model-test').addEventListener('click', () => {
+            const provider = document.getElementById('ds-new-model-provider').value;
+            const baseUrl = document.getElementById('ds-new-model-baseurl').value.trim();
+            const apiKey = document.getElementById('ds-new-model-apikey').value.trim();
+            const modelName = document.getElementById('ds-new-model-name').value.trim();
+            const displayName = document.getElementById('ds-new-model-displayname').value.trim();
+
+            if (!baseUrl || !apiKey || !modelName || !displayName) {
+                testResult.innerHTML = '<div class="ds-model-test-result error">请先填写所有必填字段</div>';
+                isTested = false;
+                saveBtn.disabled = true;
+                return;
+            }
+
+            testResult.innerHTML = '<div class="ds-model-test-result">正在测试连接...</div>';
+            saveBtn.disabled = true;
+
+            // 调用测试函数
+            this.testNewModelConnection({
+                provider,
+                baseUrl,
+                apiKey,
+                model: modelName,
+                displayName
+            }, (success, message) => {
+                if (success) {
+                    testResult.innerHTML = `<div class="ds-model-test-result success">✓ ${message || '连接测试成功'}</div>`;
+                    isTested = true;
+                    saveBtn.disabled = false;
+                } else {
+                    testResult.innerHTML = `<div class="ds-model-test-result error">✗ ${message || '连接测试失败，请检查配置'}</div>`;
+                    isTested = false;
+                    saveBtn.disabled = true;
+                }
+            });
+        });
+
+        document.getElementById('ds-new-model-cancel').addEventListener('click', closeDialog);
+        document.getElementById('ds-new-model-save').addEventListener('click', () => {
+            if (!isTested) {
+                alert('请先测试连接，测试通过后才能保存！');
+                return;
+            }
+            const provider = document.getElementById('ds-new-model-provider').value;
+            const baseUrl = document.getElementById('ds-new-model-baseurl').value.trim();
+            const apiKey = document.getElementById('ds-new-model-apikey').value.trim();
+            const modelName = document.getElementById('ds-new-model-name').value.trim();
+            const displayName = document.getElementById('ds-new-model-displayname').value.trim();
+            const isDefault = document.getElementById('ds-new-model-default').checked;
+
+            if (!baseUrl || !apiKey || !modelName || !displayName) {
+                alert('请填写所有必填字段！');
+                return;
+            }
+
+            // 如果设为默认，清除其他模型的默认状态
+            if (isDefault) {
+                this.state.models.forEach(m => m.isDefault = false);
+            }
+
+            const newModel = {
+                id: 'model_' + Date.now(),
+                provider,
+                baseUrl,
+                apiKey,
+                model: modelName,
+                displayName,
+                isDefault,
+                isTested: true
+            };
+
+            this.state.models.push(newModel);
+            this.saveModels();
+            this.renderModelList();
+            closeDialog();
+        });
+    },
+
+    // 真实API测试函数
+    async testAPIConnection(modelConfig) {
+        try {
+            // 构建API端点URL
+            let apiUrl = modelConfig.baseUrl.replace(/\/$/, ''); // 移除尾部斜杠
+            if (modelConfig.provider === 'deepseek') {
+                apiUrl += '/v1/chat/completions';
+            } else if (modelConfig.provider === 'volcengine') {
+                // 火山引擎的端点格式
+                apiUrl += '/chat/completions';
+            } else {
+                // 默认使用标准格式
+                apiUrl += '/v1/chat/completions';
+            }
+
+            // 构建请求体
+            const requestBody = {
+                model: modelConfig.model,
+                messages: [
+                    {
+                        role: 'user',
+                        content: 'test'
+                    }
+                ],
+                max_tokens: 5, // 只请求5个token，快速测试
+                temperature: 0.1
+            };
+
+            // 发送API请求
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${modelConfig.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            // 检查响应状态
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            // 验证响应格式
+            const data = await response.json();
+            if (data.choices && Array.isArray(data.choices) && data.choices.length > 0) {
+                return { success: true, message: '连接测试成功' };
+            } else {
+                throw new Error('响应格式不正确');
+            }
+        } catch (error) {
+            // 处理不同类型的错误
+            let errorMessage = '连接测试失败';
+            if (error.name === 'TypeError' && error.message && error.message.includes('fetch')) {
+                errorMessage += ': 网络请求失败，请检查URL和网络连接';
+            } else if (error.name === 'SyntaxError') {
+                errorMessage += ': 服务器响应格式错误';
+            } else if (error.message) {
+                errorMessage += ': ' + error.message;
+            } else {
+                errorMessage += ': 未知错误';
+            }
+            return { success: false, message: errorMessage };
+        }
+    },
+
+    testModelConnection() {
+        const model = this.state.models.find(m => m.id === this.state.activeModelId);
+        if (!model) return;
+
+        const testResult = document.getElementById('ds-model-test-result');
+        testResult.innerHTML = '<div class="ds-model-test-result">正在测试连接...</div>';
+
+        // 获取当前表单中的配置（可能正在编辑）
+        const baseUrl = document.getElementById('ds-model-baseurl')?.value.trim() || model.baseUrl;
+        const apiKey = document.getElementById('ds-model-apikey')?.value.trim() || model.apiKey;
+        const modelName = document.getElementById('ds-model-name')?.value.trim() || model.model;
+
+        if (!baseUrl || !apiKey || !modelName) {
+            testResult.innerHTML = '<div class="ds-model-test-result error">请先填写所有必填字段</div>';
+            return;
+        }
+
+        // 调用真实的API测试
+        this.testAPIConnection({
+            provider: model.provider,
+            baseUrl: baseUrl,
+            apiKey: apiKey,
+            model: modelName
+        }).then(result => {
+            if (result.success) {
+                testResult.innerHTML = `<div class="ds-model-test-result success">✓ ${result.message}</div>`;
+                model.isTested = true;
+            } else {
+                testResult.innerHTML = `<div class="ds-model-test-result error">✗ ${result.message}</div>`;
+                model.isTested = false;
+            }
+            this.saveModels();
+        });
+    },
+
+    testNewModelConnection(modelConfig, callback) {
+        // 调用真实的API测试
+        this.testAPIConnection(modelConfig).then(result => {
+            if (callback) {
+                callback(result.success, result.message);
+            }
+        }).catch(error => {
+            if (callback) {
+                callback(false, error.message || '测试失败');
+            }
+        });
+    },
+
+    saveModelConfig() {
+        const model = this.state.models.find(m => m.id === this.state.activeModelId);
+        if (!model) return;
+
+        const provider = document.getElementById('ds-model-provider').value;
+        const baseUrl = document.getElementById('ds-model-baseurl').value.trim();
+        const apiKey = document.getElementById('ds-model-apikey').value.trim();
+        const modelName = document.getElementById('ds-model-name').value.trim();
+        const displayName = document.getElementById('ds-model-displayname').value.trim();
+        const isDefault = document.getElementById('ds-model-default').checked;
+
+        if (!baseUrl || !apiKey || !modelName || !displayName) {
+            alert('请填写所有必填字段！');
+            return;
+        }
+
+        // 如果设为默认，清除其他模型的默认状态
+        if (isDefault) {
+            this.state.models.forEach(m => m.isDefault = false);
+        }
+
+        model.provider = provider;
+        model.baseUrl = baseUrl;
+        model.apiKey = apiKey;
+        model.model = modelName;
+        model.displayName = displayName;
+        model.isDefault = isDefault;
+
+        this.saveModels();
+        
+        // 保存后返回列表视图
+        this.state.activeModelId = null;
+        this.renderModelList();
+        this.renderModelConfig();
+        
+        alert('模型配置已保存！');
     },
 
     insertPrompt(text) {
