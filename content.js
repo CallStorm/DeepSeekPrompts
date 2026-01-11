@@ -316,6 +316,41 @@ function injectStyles() {
             background: #dc3545;
             color: #fff;
         }
+        .ds-prompt-tooltip {
+            position: fixed;
+            background: #333;
+            color: #fff;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            line-height: 1.6;
+            max-width: 400px;
+            max-height: 300px;
+            overflow-y: auto;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            display: none;
+            pointer-events: none;
+        }
+        .ds-dark .ds-prompt-tooltip {
+            background: #1e1e1e;
+            border: 1px solid #444;
+        }
+        .ds-prompt-tooltip.show {
+            display: block;
+            pointer-events: auto;
+        }
+        .ds-prompt-tooltip-title {
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .ds-prompt-tooltip-content {
+            color: #e0e0e0;
+        }
         
         /* Dialog Styles */
         .ds-dialog-overlay {
@@ -905,6 +940,10 @@ const PromptManager = {
     },
 
     close() {
+        // 清理所有 tooltip
+        const tooltips = document.querySelectorAll('.ds-prompt-tooltip');
+        tooltips.forEach(tooltip => tooltip.remove());
+        
         const overlay = document.querySelector('.ds-prompt-modal-overlay');
         if (overlay) {
             overlay.remove();
@@ -1040,6 +1079,10 @@ const PromptManager = {
         const actionsContainer = document.getElementById('ds-main-header-actions');
         if (!contentArea || !actionsContainer) return;
 
+        // 清理所有 tooltip
+        const tooltips = document.querySelectorAll('.ds-prompt-tooltip');
+        tooltips.forEach(tooltip => tooltip.remove());
+
         contentArea.innerHTML = '';
         actionsContainer.innerHTML = '';
         
@@ -1087,6 +1130,74 @@ const PromptManager = {
                 <div class="ds-prompt-card-preview">${prompt.content}</div>
                 ${actionsHtml}
             `;
+            
+            // 创建 tooltip 元素
+            const tooltip = document.createElement('div');
+            tooltip.className = 'ds-prompt-tooltip';
+            tooltip.innerHTML = `
+                <div class="ds-prompt-tooltip-title">${this.escapeHtml(prompt.title)}</div>
+                <div class="ds-prompt-tooltip-content">${this.escapeHtml(prompt.content)}</div>
+            `;
+            document.body.appendChild(tooltip);
+            
+            // 鼠标悬浮显示 tooltip
+            let showTimeout;
+            let hideTimeout;
+            let isMouseOverCard = false;
+            let isMouseOverTooltip = false;
+            
+            const showTooltipDelayed = (e) => {
+                clearTimeout(hideTimeout);
+                if (!tooltip.classList.contains('show')) {
+                    showTimeout = setTimeout(() => {
+                        if (isMouseOverCard || isMouseOverTooltip) {
+                            this.showTooltip(tooltip, card, e);
+                        }
+                    }, 300); // 延迟300ms显示，避免快速移动时闪烁
+                }
+            };
+            
+            const hideTooltipDelayed = () => {
+                clearTimeout(showTimeout);
+                hideTimeout = setTimeout(() => {
+                    if (!isMouseOverCard && !isMouseOverTooltip) {
+                        this.hideTooltip(tooltip);
+                    }
+                }, 100); // 延迟100ms隐藏，给鼠标移动到tooltip的时间
+            };
+            
+            card.addEventListener('mouseenter', (e) => {
+                isMouseOverCard = true;
+                showTooltipDelayed(e);
+            });
+            
+            card.addEventListener('mouseleave', () => {
+                isMouseOverCard = false;
+                hideTooltipDelayed();
+            });
+            
+            card.addEventListener('mousemove', (e) => {
+                if (tooltip.classList.contains('show')) {
+                    this.updateTooltipPosition(tooltip, card, e);
+                }
+            });
+            
+            // 允许鼠标移动到 tooltip 上
+            tooltip.addEventListener('mouseenter', () => {
+                isMouseOverTooltip = true;
+                clearTimeout(hideTimeout);
+                clearTimeout(showTimeout);
+                // 如果 tooltip 还没显示，立即显示
+                if (!tooltip.classList.contains('show')) {
+                    const cardRect = card.getBoundingClientRect();
+                    this.showTooltip(tooltip, card, { clientX: cardRect.left + cardRect.width / 2, clientY: cardRect.top + cardRect.height / 2 });
+                }
+            });
+            
+            tooltip.addEventListener('mouseleave', () => {
+                isMouseOverTooltip = false;
+                hideTooltipDelayed();
+            });
             
             // 点击卡片主体区域插入提示词
             const cardTitle = card.querySelector('.ds-prompt-card-title');
@@ -2113,6 +2224,60 @@ const PromptManager = {
         this.renderModelConfig();
         
         alert('模型配置已保存！');
+    },
+
+    escapeHtml(text) {
+        const div = document.createElement('div');
+        div.textContent = text;
+        return div.innerHTML;
+    },
+
+    showTooltip(tooltip, card, event) {
+        // 先显示 tooltip（但设置为不可见）以获取正确的尺寸
+        tooltip.style.visibility = 'hidden';
+        tooltip.classList.add('show');
+        // 计算位置
+        this.updateTooltipPosition(tooltip, card, event);
+        // 然后设置为可见
+        tooltip.style.visibility = 'visible';
+    },
+
+    hideTooltip(tooltip) {
+        tooltip.classList.remove('show');
+        tooltip.style.visibility = '';
+    },
+
+    updateTooltipPosition(tooltip, card, event) {
+        const cardRect = card.getBoundingClientRect();
+        const tooltipRect = tooltip.getBoundingClientRect();
+        const viewportWidth = window.innerWidth;
+        const viewportHeight = window.innerHeight;
+        
+        let left = cardRect.left + cardRect.width / 2 - tooltipRect.width / 2;
+        let top = cardRect.bottom + 5; // 减小间距，方便鼠标移动
+        
+        // 如果 tooltip 超出右边界，调整位置
+        if (left + tooltipRect.width > viewportWidth) {
+            left = viewportWidth - tooltipRect.width - 10;
+        }
+        
+        // 如果 tooltip 超出左边界，调整位置
+        if (left < 10) {
+            left = 10;
+        }
+        
+        // 如果 tooltip 超出下边界，显示在卡片上方
+        if (top + tooltipRect.height > viewportHeight) {
+            top = cardRect.top - tooltipRect.height - 5; // 减小间距，方便鼠标移动
+        }
+        
+        // 如果 tooltip 超出上边界，调整位置
+        if (top < 10) {
+            top = 10;
+        }
+        
+        tooltip.style.left = `${left}px`;
+        tooltip.style.top = `${top}px`;
     },
 
     insertPrompt(text) {
