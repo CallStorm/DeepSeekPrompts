@@ -165,6 +165,15 @@ function injectStyles() {
         .ds-prompt-add-btn:hover {
             background: #0056b3;
         }
+        .ds-prompt-button-group {
+            display: flex;
+            gap: 8px;
+            margin: 16px;
+        }
+        .ds-prompt-button-group .ds-prompt-add-btn {
+            flex: 1;
+            margin: 0;
+        }
         .ds-prompt-main {
             flex: 1;
             display: flex;
@@ -684,6 +693,71 @@ function injectStyles() {
         .ds-dark .ds-model-empty-state {
             color: #aaa;
         }
+        
+        /* Prompt Config Styles */
+        .ds-prompt-config-modal {
+            width: 700px;
+            height: 600px;
+            background: #fff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            position: relative;
+        }
+        .ds-dark .ds-prompt-config-modal {
+            background: #2d2d2d;
+            color: #fff;
+        }
+        .ds-prompt-config-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .ds-dark .ds-prompt-config-header {
+            border-color: #333;
+        }
+        .ds-prompt-config-content {
+            flex: 1;
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .ds-prompt-config-textarea {
+            flex: 1;
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ccc;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: monospace;
+            resize: none;
+            outline: none;
+            box-sizing: border-box;
+        }
+        .ds-dark .ds-prompt-config-textarea {
+            background: #333;
+            border-color: #444;
+            color: #fff;
+        }
+        .ds-prompt-config-textarea:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+        }
+        .ds-prompt-config-buttons {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .ds-dark .ds-prompt-config-buttons {
+            border-color: #333;
+        }
     `;
     document.head.appendChild(style);
 }
@@ -697,13 +771,15 @@ const PromptManager = {
         customCategories: [],
         categories: [], // Combined premade + custom
         models: [],
-        activeModelId: null
+        activeModelId: null,
+        promptConfig: '请根据以下用户输入的内容，生成一个合适的提示词标题和内容。\n\n用户输入的内容：\n{userContent}\n\n要求：\n1. 标题应该简洁明了，能够准确概括提示词的用途\n2. 内容应该详细且具有指导性，能够帮助用户更好地使用AI\n3. 请以JSON格式返回，格式为：{"title": "标题", "content": "内容"}' // 默认提示词配置
     },
 
     init() {
         injectStyles();
         this.loadCustomCategories();
         this.loadModels();
+        this.loadPromptConfig();
         // Listen for storage changes
         chrome.storage.onChanged.addListener((changes, namespace) => {
             if (namespace === 'local') {
@@ -713,8 +789,23 @@ const PromptManager = {
                 if (changes.models) {
                     this.loadModels();
                 }
+                if (changes.promptConfig) {
+                    this.loadPromptConfig();
+                }
             }
         });
+    },
+
+    loadPromptConfig() {
+        chrome.storage.local.get(['promptConfig'], (result) => {
+            if (result.promptConfig) {
+                this.state.promptConfig = result.promptConfig;
+            }
+        });
+    },
+
+    savePromptConfig() {
+        chrome.storage.local.set({ promptConfig: this.state.promptConfig });
     },
 
     loadCustomCategories() {
@@ -793,7 +884,10 @@ const PromptManager = {
                     <div class="ds-prompt-sidebar-header">提示词库</div>
                     <div class="ds-prompt-categories" id="ds-categories-list"></div>
                     <button class="ds-prompt-add-btn" id="ds-add-category-btn">+ 新建分类</button>
-                    <button class="ds-prompt-add-btn" id="ds-model-config-btn" style="margin-top: 8px;">⚙️ 模型配置</button>
+                    <div class="ds-prompt-button-group">
+                        <button class="ds-prompt-add-btn" id="ds-model-config-btn">⚙️ 模型配置</button>
+                        <button class="ds-prompt-add-btn" id="ds-prompt-config-btn">📝 提示词配置</button>
+                    </div>
                 </div>
                 <div class="ds-prompt-main">
                     <div class="ds-prompt-main-header">
@@ -825,6 +919,9 @@ const PromptManager = {
 
         const modelConfigBtn = overlay.querySelector('#ds-model-config-btn');
         modelConfigBtn.addEventListener('click', () => this.showModelConfigDialog());
+
+        const promptConfigBtn = overlay.querySelector('#ds-prompt-config-btn');
+        promptConfigBtn.addEventListener('click', () => this.showPromptConfigDialog());
 
         document.body.appendChild(overlay);
         this.renderSidebar();
@@ -960,6 +1057,7 @@ const PromptManager = {
                 </div>
                 <div class="ds-dialog-buttons">
                     <button class="ds-btn ds-btn-secondary" id="ds-prompt-cancel">取消</button>
+                    ${!isEdit ? '<button class="ds-btn ds-btn-secondary" id="ds-prompt-generate">✨ 一键生成</button>' : ''}
                     <button class="ds-btn ds-btn-primary" id="ds-prompt-save">保存</button>
                 </div>
             </div>
@@ -970,6 +1068,17 @@ const PromptManager = {
         const closeDialog = () => dialogOverlay.remove();
 
         document.getElementById('ds-prompt-cancel').addEventListener('click', closeDialog);
+        
+        // 一键生成按钮（仅新建时显示）
+        if (!isEdit) {
+            const generateBtn = document.getElementById('ds-prompt-generate');
+            if (generateBtn) {
+                generateBtn.addEventListener('click', () => {
+                    this.generatePrompt(dialogOverlay);
+                });
+            }
+        }
+        
         document.getElementById('ds-prompt-save').addEventListener('click', () => {
             const title = document.getElementById('ds-prompt-title').value.trim();
             const content = document.getElementById('ds-prompt-content').value.trim();
@@ -982,6 +1091,133 @@ const PromptManager = {
             this.savePrompt({ title, content });
             closeDialog();
         });
+    },
+
+    getDefaultModel() {
+        return this.state.models.find(m => m.isDefault) || this.state.models[0];
+    },
+
+    async generatePrompt(dialogOverlay) {
+        // 获取默认模型
+        const defaultModel = this.getDefaultModel();
+        if (!defaultModel) {
+            alert('请先配置模型！');
+            return;
+        }
+
+        // 获取用户输入的内容
+        const contentInput = document.getElementById('ds-prompt-content');
+        const userContent = contentInput.value.trim();
+        
+        if (!userContent) {
+            alert('请先输入一些内容作为参考！');
+            return;
+        }
+
+        // 构建完整的提示词：使用模板，将用户输入的内容替换到占位符位置
+        const fullPrompt = this.state.promptConfig.replace('{userContent}', userContent);
+
+        // 禁用按钮，显示加载状态
+        const generateBtn = document.getElementById('ds-prompt-generate');
+        const saveBtn = document.getElementById('ds-prompt-save');
+        const originalGenerateText = generateBtn.textContent;
+        generateBtn.disabled = true;
+        saveBtn.disabled = true;
+        generateBtn.textContent = '生成中...';
+
+        try {
+            // 构建API端点URL
+            let apiUrl = defaultModel.baseUrl.replace(/\/$/, '');
+            if (defaultModel.provider === 'deepseek') {
+                apiUrl += '/v1/chat/completions';
+            } else if (defaultModel.provider === 'volcengine') {
+                apiUrl += '/chat/completions';
+            } else {
+                apiUrl += '/v1/chat/completions';
+            }
+
+            // 构建请求体
+            const requestBody = {
+                model: defaultModel.model,
+                messages: [
+                    {
+                        role: 'user',
+                        content: fullPrompt
+                    }
+                ],
+                temperature: 0.7,
+                max_tokens: 1000
+            };
+
+            // 发送API请求
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${defaultModel.apiKey}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestBody)
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error?.message || `HTTP ${response.status}: ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            if (!data.choices || !data.choices[0] || !data.choices[0].message) {
+                throw new Error('响应格式不正确');
+            }
+
+            const responseText = data.choices[0].message.content.trim();
+            
+            // 尝试解析JSON
+            let result;
+            try {
+                // 尝试提取JSON部分（可能在代码块中）
+                const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+                if (jsonMatch) {
+                    result = JSON.parse(jsonMatch[0]);
+                } else {
+                    result = JSON.parse(responseText);
+                }
+            } catch (parseError) {
+                // 如果解析失败，尝试智能提取
+                const titleMatch = responseText.match(/标题[：:]\s*["']?([^"'\n]+)["']?/i) || 
+                                   responseText.match(/title[：:]\s*["']?([^"'\n]+)["']?/i);
+                const contentMatch = responseText.match(/内容[：:]\s*([\s\S]*?)(?:\n\n|\n$|$)/i) ||
+                                     responseText.match(/content[：:]\s*([\s\S]*?)(?:\n\n|\n$|$)/i);
+                
+                if (titleMatch && contentMatch) {
+                    result = {
+                        title: titleMatch[1].trim(),
+                        content: contentMatch[1].trim()
+                    };
+                } else {
+                    // 如果还是无法解析，使用默认格式
+                    const lines = responseText.split('\n').filter(l => l.trim());
+                    result = {
+                        title: lines[0] || '新提示词',
+                        content: lines.slice(1).join('\n') || responseText
+                    };
+                }
+            }
+
+            // 填充到表单
+            const titleInput = document.getElementById('ds-prompt-title');
+            titleInput.value = result.title || '新提示词';
+            contentInput.value = result.content || responseText;
+
+            alert('提示词生成成功！');
+        } catch (error) {
+            console.error('生成提示词失败:', error);
+            alert('生成提示词失败：' + (error.message || '未知错误'));
+        } finally {
+            // 恢复按钮状态
+            generateBtn.disabled = false;
+            saveBtn.disabled = false;
+            generateBtn.textContent = originalGenerateText;
+        }
     },
 
     savePrompt(promptData) {
@@ -1144,6 +1380,60 @@ const PromptManager = {
         }
         this.renderSidebar();
         this.renderPrompts();
+    },
+
+    showPromptConfigDialog() {
+        const overlay = document.createElement('div');
+        overlay.className = 'ds-prompt-modal-overlay';
+        
+        // Check for dark mode
+        if (document.documentElement.classList.contains('dark')) {
+            overlay.classList.add('ds-dark');
+        }
+
+        overlay.innerHTML = `
+            <div class="ds-prompt-config-modal">
+                <div class="ds-prompt-config-header">
+                    <h3>提示词配置</h3>
+                    <button class="ds-prompt-close" id="ds-prompt-config-close">&times;</button>
+                </div>
+                <div class="ds-prompt-config-content">
+                    <label class="ds-form-label" style="margin-bottom: 12px;">提示词模板（用于帮助生成提示词的标题和内容）</label>
+                    <textarea class="ds-prompt-config-textarea" id="ds-prompt-config-textarea" placeholder="请输入提示词模板...">${this.state.promptConfig}</textarea>
+                </div>
+                <div class="ds-prompt-config-buttons">
+                    <button class="ds-btn ds-btn-secondary" id="ds-prompt-config-cancel">取消</button>
+                    <button class="ds-btn ds-btn-primary" id="ds-prompt-config-save">保存</button>
+                </div>
+            </div>
+        `;
+
+        // Event Listeners
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) overlay.remove();
+        });
+
+        overlay.querySelector('#ds-prompt-config-close').addEventListener('click', () => {
+            overlay.remove();
+        });
+
+        overlay.querySelector('#ds-prompt-config-cancel').addEventListener('click', () => {
+            overlay.remove();
+        });
+
+        overlay.querySelector('#ds-prompt-config-save').addEventListener('click', () => {
+            const configText = overlay.querySelector('#ds-prompt-config-textarea').value.trim();
+            if (!configText) {
+                alert('提示词配置不能为空！');
+                return;
+            }
+            this.state.promptConfig = configText;
+            this.savePromptConfig();
+            overlay.remove();
+            alert('提示词配置已保存！');
+        });
+
+        document.body.appendChild(overlay);
     },
 
     showModelConfigDialog() {
