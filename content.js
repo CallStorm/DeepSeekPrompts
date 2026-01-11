@@ -265,6 +265,57 @@ function injectStyles() {
         .ds-dark .ds-prompt-card-preview {
             color: #aaa;
         }
+        .ds-prompt-card-actions {
+            display: none;
+            gap: 4px;
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid #e0e0e0;
+        }
+        .ds-dark .ds-prompt-card-actions {
+            border-color: #444;
+        }
+        .ds-prompt-card:hover .ds-prompt-card-actions {
+            display: flex;
+        }
+        .ds-prompt-card-action-btn {
+            flex: 1;
+            padding: 6px 12px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            background: #fff;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.2s;
+        }
+        .ds-dark .ds-prompt-card-action-btn {
+            background: #2d2d2d;
+            border-color: #444;
+            color: #fff;
+        }
+        .ds-prompt-card-action-btn:hover {
+            background: #f5f5f5;
+            border-color: #007bff;
+        }
+        .ds-dark .ds-prompt-card-action-btn:hover {
+            background: #333;
+        }
+        .ds-prompt-card-action-btn.edit {
+            color: #007bff;
+            border-color: #007bff;
+        }
+        .ds-prompt-card-action-btn.edit:hover {
+            background: #007bff;
+            color: #fff;
+        }
+        .ds-prompt-card-action-btn.delete {
+            color: #dc3545;
+            border-color: #dc3545;
+        }
+        .ds-prompt-card-action-btn.delete:hover {
+            background: #dc3545;
+            color: #fff;
+        }
         
         /* Dialog Styles */
         .ds-dialog-overlay {
@@ -1016,18 +1067,66 @@ const PromptManager = {
             return;
         }
 
-        prompts.forEach(prompt => {
+        prompts.forEach((prompt, index) => {
             const card = document.createElement('div');
             card.className = 'ds-prompt-card';
+            
+            // 如果是自定义分类，添加编辑和删除按钮
+            let actionsHtml = '';
+            if (activeCategory.is_custom) {
+                actionsHtml = `
+                    <div class="ds-prompt-card-actions">
+                        <button class="ds-prompt-card-action-btn edit" data-prompt-index="${index}">编辑</button>
+                        <button class="ds-prompt-card-action-btn delete" data-prompt-index="${index}">删除</button>
+                    </div>
+                `;
+            }
+            
             card.innerHTML = `
                 <div class="ds-prompt-card-title">${prompt.title}</div>
                 <div class="ds-prompt-card-preview">${prompt.content}</div>
+                ${actionsHtml}
             `;
             
-            card.addEventListener('click', () => {
-                this.insertPrompt(prompt.content);
-                this.close();
+            // 点击卡片主体区域插入提示词
+            const cardTitle = card.querySelector('.ds-prompt-card-title');
+            const cardPreview = card.querySelector('.ds-prompt-card-preview');
+            [cardTitle, cardPreview].forEach(el => {
+                el.addEventListener('click', () => {
+                    this.insertPrompt(prompt.content);
+                    this.close();
+                });
             });
+            
+            // 如果是自定义分类，添加编辑和删除事件
+            if (activeCategory.is_custom) {
+                const editBtn = card.querySelector('.edit');
+                const deleteBtn = card.querySelector('.delete');
+                
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    // 找到原始提示词在分类中的索引
+                    const originalIndex = activeCategory.prompts.findIndex(p => 
+                        p.title === prompt.title && p.content === prompt.content
+                    );
+                    if (originalIndex !== -1) {
+                        this.showAddPromptDialog(activeCategory.prompts[originalIndex], originalIndex);
+                    }
+                });
+                
+                deleteBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    if (confirm(`确定要删除提示词 "${prompt.title}" 吗？`)) {
+                        // 找到原始提示词在分类中的索引
+                        const originalIndex = activeCategory.prompts.findIndex(p => 
+                            p.title === prompt.title && p.content === prompt.content
+                        );
+                        if (originalIndex !== -1) {
+                            this.deletePrompt(originalIndex);
+                        }
+                    }
+                });
+            }
 
             grid.appendChild(card);
         });
@@ -1035,7 +1134,7 @@ const PromptManager = {
         contentArea.appendChild(grid);
     },
 
-    showAddPromptDialog(promptToEdit = null) {
+    showAddPromptDialog(promptToEdit = null, promptIndex = null) {
         const modal = document.querySelector('.ds-prompt-modal');
         if (!modal) return;
 
@@ -1088,7 +1187,7 @@ const PromptManager = {
                 return;
             }
 
-            this.savePrompt({ title, content });
+            this.savePrompt({ title, content }, promptIndex);
             closeDialog();
         });
     },
@@ -1220,17 +1319,38 @@ const PromptManager = {
         }
     },
 
-    savePrompt(promptData) {
+    savePrompt(promptData, promptIndex = null) {
         const activeCategory = this.state.categories.find(c => c.id === this.state.activeCategoryId);
         if (!activeCategory || !activeCategory.is_custom) return;
 
-        activeCategory.prompts.push(promptData);
+        // 如果是编辑模式，更新现有提示词；否则添加新提示词
+        if (promptIndex !== null && promptIndex >= 0 && promptIndex < activeCategory.prompts.length) {
+            activeCategory.prompts[promptIndex] = promptData;
+        } else {
+            activeCategory.prompts.push(promptData);
+        }
         
         const categoryIndex = this.state.customCategories.findIndex(c => c.id === this.state.activeCategoryId);
         if (categoryIndex > -1) {
             this.state.customCategories[categoryIndex] = activeCategory;
             this.saveCustomCategories();
             this.renderPrompts();
+        }
+    },
+
+    deletePrompt(promptIndex) {
+        const activeCategory = this.state.categories.find(c => c.id === this.state.activeCategoryId);
+        if (!activeCategory || !activeCategory.is_custom) return;
+        
+        if (promptIndex >= 0 && promptIndex < activeCategory.prompts.length) {
+            activeCategory.prompts.splice(promptIndex, 1);
+            
+            const categoryIndex = this.state.customCategories.findIndex(c => c.id === this.state.activeCategoryId);
+            if (categoryIndex > -1) {
+                this.state.customCategories[categoryIndex] = activeCategory;
+                this.saveCustomCategories();
+                this.renderPrompts();
+            }
         }
     },
 
